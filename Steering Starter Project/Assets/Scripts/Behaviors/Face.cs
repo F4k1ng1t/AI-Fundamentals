@@ -10,7 +10,7 @@ public class Face : Align
         Vector3 direction = target.transform.position - character.transform.position;
 
         // --- replace me ---
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
         // ------------------
 
 

@@ -4,15 +4,31 @@ using UnityEngine;
 
 public class Wanderer : Kinematic
 {
+    Wander myMoveType;
+    Face mySeekRotateType;
+    LookWhereGoing myFleeRotateType;
+
+    public bool flee = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        myMoveType = new Wander();
+        myMoveType.character = this;
+        myMoveType.target = myTarget;
+
+        mySeekRotateType = new Face();
+        mySeekRotateType.character = this;
+        mySeekRotateType.target = myTarget;
+
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
-        
+        steeringUpdate = new SteeringOutput();
+        steeringUpdate.linear = myMoveType.getSteering().linear;
+        steeringUpdate.angular = flee ? myFleeRotateType.getSteering().angular : mySeekRotateType.getSteering().angular;
+        base.Update();
     }
 }

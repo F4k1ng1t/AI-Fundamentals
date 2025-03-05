@@ -27,7 +27,7 @@ public class Separator : Kinematic
             Separator separator = child.gameObject.GetComponent<Separator>();
             if (separator != null && separator != this) // Ensure it exists and isn't self-referencing
             {
-                Debug.Log("Found Separator: " + separator.gameObject.name);
+                //Debug.Log("Found Separator: " + separator.gameObject.name);
                 separatorList.Add(separator); // Add to the list
             }
         }

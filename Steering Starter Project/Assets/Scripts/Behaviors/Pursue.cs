@@ -4,41 +4,59 @@ using UnityEngine;
 
 public class Pursue : Seek
 {
-    // the maximum prediction time
-    float maxPredictionTime = 1f;
+    // The maximum prediction time
+    float maxPredictionTime = 5f;
 
-    // overrides the position seek will aim for
-    // assume the target will continue travelling in the same direction and speed
-    // pick a point farther along that vector
+    // Toggle between pursuing and evading
+    public bool evade;
+
+    // Overrides the position seek will aim for
     protected override Vector3 getTargetPosition()
     {
-        // 1. figure out how far ahead in time we should predict
-        Vector3 directionToTarget = target.transform.position - character.transform.position;
+        // 1. Calculate direction to the target
+        Vector3 directionToTarget;
+        if (evade)
+        {
+            directionToTarget = character.transform.position - target.transform.position; // Opposite direction for evasion
+        }
+        else
+        {
+            directionToTarget = target.transform.position - character.transform.position; // Normal direction for pursuit
+        }
+
         float distanceToTarget = directionToTarget.magnitude;
         float mySpeed = character.linearVelocity.magnitude;
-        float predictionTime; 
+
+        // 2. Determine appropriate prediction time
+        float predictionTime;
         if (mySpeed <= distanceToTarget / maxPredictionTime)
         {
-            // if I'm far enough away, I can use the max prediction time
             predictionTime = maxPredictionTime;
         }
         else
         {
-            // if I'm close enough that my current speed will get me to 
-            // the target before the max prediction time elapses
-            // use a smaller prediction time
             predictionTime = distanceToTarget / mySpeed;
         }
 
-        // 2. get the current velocity of our target and add an offset based on our prediction time
-        //Kinematic myMovingTarget = target.GetComponent(typeof(Kinematic)) as Kinematic;
+        // 3. Get the target's velocity and predict its future position
         Kinematic myMovingTarget = target.GetComponent<Kinematic>();
         if (myMovingTarget == null)
         {
-            // default to seek behavior for non-kinematic targets
-            return base.getTargetPosition();
+            return base.getTargetPosition(); // Default seek behavior if the target is not kinematic
         }
 
-        return target.transform.position + myMovingTarget.linearVelocity * predictionTime;
+        // 4. Calculate predicted position based on pursuit or evasion
+        Vector3 predictedPosition = target.transform.position + myMovingTarget.linearVelocity * predictionTime;
+
+        // 5. Adjust for evasion
+        if (evade)
+        {
+            // Move away from the predicted position
+            Vector3 evadeDirection = (character.transform.position - predictedPosition).normalized;
+            float evadeDistance = distanceToTarget; // Move based on distance
+            predictedPosition = character.transform.position + evadeDirection * evadeDistance;
+        }
+
+        return predictedPosition;
     }
 }

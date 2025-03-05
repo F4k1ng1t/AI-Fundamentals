@@ -5,8 +5,7 @@ using UnityEngine;
 public class Wanderer : Kinematic
 {
     Wander myMoveType;
-    Face mySeekRotateType;
-    LookWhereGoing myFleeRotateType;
+    LookWhereGoing myRotateType;
 
     public bool flee = false;
 
@@ -17,9 +16,9 @@ public class Wanderer : Kinematic
         myMoveType.character = this;
         myMoveType.target = myTarget;
 
-        mySeekRotateType = new Face();
-        mySeekRotateType.character = this;
-        mySeekRotateType.target = myTarget;
+        myRotateType = new LookWhereGoing();
+        myRotateType.character = this;
+        myRotateType.target = myTarget;
 
     }
 
@@ -28,7 +27,7 @@ public class Wanderer : Kinematic
     {
         steeringUpdate = new SteeringOutput();
         steeringUpdate.linear = myMoveType.getSteering().linear;
-        steeringUpdate.angular = flee ? myFleeRotateType.getSteering().angular : mySeekRotateType.getSteering().angular;
+        steeringUpdate.angular = myRotateType.getSteering().angular;
         base.Update();
     }
 }
